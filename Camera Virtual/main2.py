@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from transformacoes import Transformacao
+from transformacoes import Transformacao as trf
 
 def menu(id):
     menu = (('1. Manipular o objeto\n2. Manipular a câmera\n3. Modificar projeção\n4. Modificar mapeamento\n5. Visualizar objeto', 11),
@@ -10,10 +10,37 @@ def menu(id):
             ('4.1. Window\n4.2. Viewport',50))
     
     print(menu[id][0])
+    op = int(input('Opcao: '))
+    if op == 1:
+        ang = float(input('Angulo: '))
+        for i in piramide:
+            trf.rotacaoZ(i, 45)
+
+def atualizar():
+    plt.clf()
+    fig = plt.figure(figsize=(4, 4))
+    ax = plt.axes(projection='3d')
+
+
+    topo = piramide[0]
+    ie = piramide[1]
+    id = piramide[2]
+    se = piramide[3]
+    sd = piramide[4]
+
+    plt.plot([topo[0],ie[0]],[topo[1],ie[1]],[topo[2],ie[2]],color='black')
+    plt.plot([topo[0],id[0]],[topo[1],id[1]],[topo[2],id[2]],color='black')
+    plt.plot([topo[0],se[0]],[topo[1],se[1]],[topo[2],se[2]],color='black')
+    plt.plot([topo[0],sd[0]],[topo[1],sd[1]],[topo[2],sd[2]],color='black')
+
+    plt.plot([se[0],sd[0]],[se[1],sd[1]],[se[2],sd[2]],color='black')
+    plt.plot([id[0],sd[0]],[id[1],sd[1]],[id[2],sd[2]],color='black')
+    plt.plot([se[0],ie[0]],[se[1],ie[1]],[se[2],ie[2]],color='black')
+    plt.plot([id[0],ie[0]],[id[1],ie[1]],[id[2],ie[2]],color='black')
+    #plt.show()
+    plt.savefig('x.jpg')
 
 #inicializacao
-fig = plt.figure(figsize=(4, 4))
-ax = plt.axes(projection='3d')
 piramide = np.array([[0.0,0.0,1.0,1.0],
                 [-1.0,-1.0,-1.0,1.0],
                 [1.0,-1.0,-1.0,1.0],
@@ -21,30 +48,19 @@ piramide = np.array([[0.0,0.0,1.0,1.0],
                 [1.0,1.0,-1.0,1.0],
                 ])
 
-topo = piramide[0]
-ie = piramide[1]
-id = piramide[2]
-se = piramide[3]
-sd = piramide[4]
-
-plt.plot([topo[0],ie[0]],[topo[1],ie[1]],[topo[2],ie[2]],color='black')
-plt.plot([topo[0],id[0]],[topo[1],id[1]],[topo[2],id[2]],color='black')
-plt.plot([topo[0],se[0]],[topo[1],se[1]],[topo[2],se[2]],color='black')
-plt.plot([topo[0],sd[0]],[topo[1],sd[1]],[topo[2],sd[2]],color='black')
-
-plt.plot([se[0],sd[0]],[se[1],sd[1]],[se[2],sd[2]],color='black')
-plt.plot([id[0],sd[0]],[id[1],sd[1]],[id[2],sd[2]],color='black')
-plt.plot([se[0],ie[0]],[se[1],ie[1]],[se[2],ie[2]],color='black')
-plt.plot([id[0],ie[0]],[id[1],ie[1]],[id[2],ie[2]],color='black')
 # turn off/on axis
 plt.axis('off')
+for i in range(len(piramide)):
+    piramide[i] = trf.rotacaoY(piramide[i], 60)
+    piramide[i] = trf.rotacaoZ(piramide[i], 30)
+atualizar()
 
-menu(0)
-while True:
-    op = int(input('opcao'))
-    if op == 0:
-        break
-    menu(op)
+# menu(0)
+# while True:
+#     op = int(input('opcao'))
+#     if op == 0:
+#         break
+#     menu(op)
+#     plt.savefig('x.jpg')
+    #plt.show()
 # show the graph
-#plt.savefig('z.jpg')
-plt.show()
