@@ -9,6 +9,8 @@ def menu(id):
             ('3.1. Projeção perspectiva\n3.2. Projeção paralela',40),
             ('4.1. Window\n4.2. Viewport',50))
     
+    
+    
     print(menu[id][0])
     op = int(input('Opcao: '))
     if op == 1:
@@ -18,9 +20,18 @@ def menu(id):
 
 def atualizar():
     plt.clf()
-    fig = plt.figure(figsize=(4, 4))
+    fig = plt.figure(figsize=(4, 4),frameon=False)
     ax = plt.axes(projection='3d')
+    ax.set_axis_off()    
+    fig.add_axes(ax)
+    cor_linha = 'black'
 
+    piramide = np.array([[0.0,0.0,0.5,1.0],
+                [-0.5,-0.5,-0.5,1.0],
+                [0.5,-0.5,-0.5,1.0],
+                [-0.5,0.5,-0.5,1.0],
+                [0.5,0.5,-0.5,1.0],
+                ])
 
     topo = piramide[0]
     ie = piramide[1]
@@ -28,31 +39,43 @@ def atualizar():
     se = piramide[3]
     sd = piramide[4]
 
-    plt.plot([topo[0],ie[0]],[topo[1],ie[1]],[topo[2],ie[2]],color='black')
-    plt.plot([topo[0],id[0]],[topo[1],id[1]],[topo[2],id[2]],color='black')
-    plt.plot([topo[0],se[0]],[topo[1],se[1]],[topo[2],se[2]],color='black')
-    plt.plot([topo[0],sd[0]],[topo[1],sd[1]],[topo[2],sd[2]],color='black')
+    plt.plot([topo[0],ie[0]],[topo[1],ie[1]],[topo[2],ie[2]])
+    plt.plot([topo[0],id[0]],[topo[1],id[1]],[topo[2],id[2]])
+    plt.plot([topo[0],se[0]],[topo[1],se[1]],[topo[2],se[2]])
+    plt.plot([topo[0],sd[0]],[topo[1],sd[1]],[topo[2],sd[2]])
 
-    plt.plot([se[0],sd[0]],[se[1],sd[1]],[se[2],sd[2]],color='black')
-    plt.plot([id[0],sd[0]],[id[1],sd[1]],[id[2],sd[2]],color='black')
-    plt.plot([se[0],ie[0]],[se[1],ie[1]],[se[2],ie[2]],color='black')
-    plt.plot([id[0],ie[0]],[id[1],ie[1]],[id[2],ie[2]],color='black')
+    plt.plot([se[0],sd[0]],[se[1],sd[1]],[se[2],sd[2]])
+    plt.plot([id[0],sd[0]],[id[1],sd[1]],[id[2],sd[2]])
+    plt.plot([se[0],ie[0]],[se[1],ie[1]],[se[2],ie[2]])
+    plt.plot([id[0],ie[0]],[id[1],ie[1]],[id[2],ie[2]])
     #plt.show()
-    plt.savefig('x.jpg')
+    plt.savefig('x.jpg',transparent=True)
 
 #inicializacao
-piramide = np.array([[0.0,0.0,1.0,1.0],
-                [-1.0,-1.0,-1.0,1.0],
-                [1.0,-1.0,-1.0,1.0],
-                [-1.0,1.0,-1.0,1.0],
-                [1.0,1.0,-1.0,1.0],
+#limites da window
+xminw = -5
+yminw = -5
+xmaxw = 0
+ymaxw = 0
+
+#limites da viewport
+xminv = 0
+yminv = 0
+xmaxv = 400
+ymaxv = 400
+
+#pontos da piramide
+piramide = np.array([[0.0,0.0,0.5,1.0],
+                [-0.5,-0.5,-0.5,1.0],
+                [0.5,-0.5,-0.5,1.0],
+                [-0.5,0.5,-0.5,1.0],
+                [0.5,0.5,-0.5,1.0],
                 ])
 
+#matriz modelo
+
 # turn off/on axis
-plt.axis('off')
-for i in range(len(piramide)):
-    piramide[i] = trf.rotacaoY(piramide[i], 60)
-    piramide[i] = trf.rotacaoZ(piramide[i], 30)
+plt.axis('off')   
 atualizar()
 
 # menu(0)
