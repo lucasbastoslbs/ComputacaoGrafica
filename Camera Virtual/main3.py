@@ -2,16 +2,6 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 
-def mostraPontos(p1, p2, p3, p4, p5, p6, p7, p8):
-    print(p1)
-    print(p2)
-    print(p3)
-    print(p4)
-    print(p5)
-    print(p6)
-    print(p7)
-    print(p8)
-
 def desenhaLinha(p1x, p1y, p2x, p2y):
     point1 = [p1x, p1y]
     point2 = [p2x, p2y]
@@ -21,16 +11,24 @@ def desenhaLinha(p1x, p1y, p2x, p2y):
 
 def gera_imagem(kw):
     #limites da window
-    xminw = -5
-    yminw = -5
-    xmaxw = 0
-    ymaxw = 0
+    # xminw = -5
+    # yminw = -5
+    # xmaxw = 0
+    # ymaxw = 0
+    xminw = kw['xminw']
+    yminw = kw['yminw']
+    xmaxw = kw['xmaxw']
+    ymaxw = kw['ymaxw']
 
     #limites da viewport
-    xminv = 0
-    yminv = 0
-    xmaxv = 400
-    ymaxv = 400
+    # xminv = 0
+    # yminv = 0
+    # xmaxv = 400
+    # ymaxv = 400
+    xminv = kw['xminv']
+    yminv = kw['yminv']
+    xmaxv = kw['xmaxv']
+    ymaxv = kw['ymaxv']
 
     x_form = np.array([[-2.0,1.5,0.5, 1.0] ,
                         [-1.0,1.5,0.5, 1.0] ,
@@ -118,7 +116,6 @@ def gera_imagem(kw):
     ])
 
     rotacao = rotz.dot(roty.dot(rotx))
-
     matrizModelo = escala.dot(rotacao.dot(translacao))
 
     #2) Coordenadas do mundo
@@ -181,7 +178,7 @@ def gera_imagem(kw):
     rotacaoCam = rotzCam.dot(rotyCam.dot(rotxCam))
 
     matrizVisualizacao = rotacaoCam.dot(translacaoCam)
-
+ 
     #3) Coordenadas de visualização
     pv = []
     for u in pu:
@@ -191,22 +188,43 @@ def gera_imagem(kw):
 
     #c. Matriz de projeção
     #projeção perspectiva
-    fovy = math.radians(80.0)
-    aspect = 1.0
-    zNear = 0.1
-    zFar = 100
+    if(kw['projecao'] == 'perspectiva'):
+        fovy = kw['projecao_params'][0]
+        aspect = kw['projecao_params'][1]
+        zNear = kw['projecao_params'][2]
+        zFar = kw['projecao_params'][3]
+        a = 1/(math.tan(fovy/2) * aspect)
+        b = 1/(math.tan(fovy/2))
+        c = (zFar+zNear)/(zNear-zFar)
+        d = (2*(zFar*zNear))/(zNear-zFar)
 
-    a = 1/(math.tan(fovy/2) * aspect)
-    b = 1/(math.tan(fovy/2))
-    c = (zFar+zNear)/(zNear-zFar)
-    d = (2*(zFar*zNear))/(zNear-zFar)
+        matrizProjecao = np.array([
+            [a, 0, 0, 0],
+            [0, b, 0, 0],
+            [0, 0, c, d],
+            [0, 0, -1, 0]
+        ])
+    #elif(kw['projecao'] == 'paralela'):
+    else:
+        xleft = kw['projecao_params'][0]
+        xright = kw['projecao_params'][1]
+        ybottom = kw['projecao_params'][2]
+        ytop = kw['projecao_params'][3]
+        znear = kw['projecao_params'][4]
+        zfar = kw['projecao_params'][5]
+        a = 2/(xright-xleft)
+        b = 2/(ytop-ybottom)
+        c = -(2/(zfar-znear))
+        d = -((zfar+znear)/(zfar-znear))
+        e = -((ytop+ybottom)/(ytop-ybottom))
+        f = -((xright+xleft)/(xright-xleft))
 
-    matrizProjecao = np.array([
-        [a, 0, 0, 0],
-        [0, b, 0, 0],
-        [0, 0, c, d],
-        [0, 0, -1, 0]
-    ])
+        matrizProjecao = np.array([
+            [a, 0, 0, f],
+            [0, b, 0, e],
+            [0, 0, c, d],
+            [0, 0, 0, 1]
+        ])
 
     pp = []
     for v in pv:
@@ -221,11 +239,10 @@ def gera_imagem(kw):
     # mostraPontos(p1p, p2p ,p3p ,p4p ,p5p ,p6p ,p7p ,p8p)
 
     #define os limites da janela onde os pontos serão renderizados
-    plt.xlim(350, 450)
-    plt.ylim(350, 450)
+    # plt.xlim(350, 450)
+    # plt.ylim(350, 450)
 
     #d. Mapeamento
-    # print("\nMapeamento")
     pmx = []
     pmy = []
     for p in pp:
@@ -272,7 +289,6 @@ def gera_imagem(kw):
     desenhaLinha(pmx[3+12], pmy[3+12], pmx[1+12], pmy[1+12] )
     desenhaLinha(pmx[1+12], pmy[1+12], pmx[0+12], pmy[0+12])
 
-    #plt.show()
     plt.axis('off')
     plt.plot()
     return matrizVisualizacao,matrizProjecao
