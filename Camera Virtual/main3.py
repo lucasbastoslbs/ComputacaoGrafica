@@ -86,27 +86,33 @@ def gera_imagem(kw):
 
     #rotacao em x
     angx = math.radians(kw['orx'])
+    ocosx = math.cos(angx)
+    osinx = math.sin(angx)
     rotx = np.array([
         [1, 0, 0, 0],
-        [0, math.cos(angx), -math.sin(angx), 0],
-        [0, math.sin(angx), math.cos(angx), 0],
+        [0, ocosx, -osinx, 0],
+        [0, osinx, ocosx, 0],
         [0, 0, 0, 1]    
     ])
 
     #rotacao em y
     angy = math.radians(kw['ory'])
+    ocosy = math.cos(angy)
+    osiny = math.sin(angy)
     roty = np.array([
-        [math.cos(angy), 0, math.sin(angy), 0],
+        [ocosy, 0, osiny, 0],
         [0, 1, 0, 0],
-        [-math.sin(angy), 0, math.cos(angy), 0],
+        [-osiny, 0, ocosy, 0],
         [0, 0, 0, 1]    
     ])
 
     #rotacao em z
     angz = math.radians(kw['orz'])
+    ocosz = math.cos(angz)
+    osinz = math.sin(angz)
     rotz = np.array([
-        [math.cos(angz), -math.sin(angz), 0, 0],
-        [math.sin(angz), math.cos(angz), 0, 0],
+        [ocosz, -osinz, 0, 0],
+        [osinz, ocosz, 0, 0],
         [0, 0, 1, 0],
         [0, 0, 0, 1]    
     ])
@@ -123,9 +129,9 @@ def gera_imagem(kw):
     # mostraPontos(p1u, p2u ,p3u ,p4u ,p5u ,p6u ,p7u ,p8u)
 
     #translação da câmera
-    txCam = 0
-    tyCam = 0
-    tzCam = -10
+    txCam = kw['ctx']
+    tyCam = kw['cty']
+    tzCam = kw['ctz']
     #é a cena que se move em torno da câmera
     translacaoCam = np.array([
         [1, 0, 0, -txCam],
@@ -135,17 +141,46 @@ def gera_imagem(kw):
     ])
 
     #rotação da câmera
+    #rotacao em x
+    angxCam = kw['crx']
+    angxCam = math.radians(-angxCam)
+    ccosx = math.cos(angxCam)
+    csinx = math.sin(angxCam)
+    rotxCam = np.array([
+            [1, 0, 0, 0],
+            [0, ccosx, -csinx, 0],
+            [0, csinx, ccosx, 0],
+            [0, 0, 0, 1]       
+    ])
+
+    #rotação da câmera
     #rotacao em y
-    angyCam = 0
+    angyCam = kw['cry']
     angyCam = math.radians(-angyCam)
+    ccosy = math.cos(angyCam)
+    csiny = math.sin(angyCam)
     rotyCam = np.array([
-            [math.cos(angyCam), 0, math.sin(angyCam), 0],
+            [ccosy, 0, csiny, 0],
             [0, 1, 0, 0],
-            [-math.sin(angyCam), 0, math.cos(angyCam), 0],
+            [-csiny, 0, ccosy, 0],
             [0, 0, 0, 1]    
     ])
 
-    matrizVisualizacao = rotyCam.dot(translacaoCam)
+    #rotação da câmera
+    #rotacao em z
+    angzCam = kw['crz']
+    angzCam = math.radians(-angzCam)
+    ccosz = math.cos(angzCam)
+    csinz = math.sin(angzCam)
+    rotzCam = np.array([
+            [ccosz, -csinz, 0, 0],
+            [csinz, ccosz, 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1]       
+    ])
+    rotacaoCam = rotzCam.dot(rotyCam.dot(rotxCam))
+
+    matrizVisualizacao = rotacaoCam.dot(translacaoCam)
 
     #3) Coordenadas de visualização
     pv = []
@@ -240,4 +275,4 @@ def gera_imagem(kw):
     #plt.show()
     plt.axis('off')
     plt.plot()
-    #plt.savefig('x_form.jpg')
+    return matrizVisualizacao,matrizProjecao
