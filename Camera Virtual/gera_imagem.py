@@ -11,20 +11,12 @@ def desenhaLinha(p1x, p1y, p2x, p2y):
 
 def gera_imagem(kw):
     #limites da window
-    # xminw = -5
-    # yminw = -5
-    # xmaxw = 0
-    # ymaxw = 0
     xminw = kw['xminw']
     yminw = kw['yminw']
     xmaxw = kw['xmaxw']
     ymaxw = kw['ymaxw']
 
     #limites da viewport
-    # xminv = 0
-    # yminv = 0
-    # xmaxv = 400
-    # ymaxv = 400
     xminv = kw['xminv']
     yminv = kw['yminv']
     xmaxv = kw['xmaxv']

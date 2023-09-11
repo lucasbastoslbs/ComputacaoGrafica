@@ -1,5 +1,5 @@
 from tkinter import *
-from main3 import gera_imagem
+from gera_imagem import gera_imagem
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 import matplotlib
