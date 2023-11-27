@@ -30,10 +30,6 @@ sofa_indices = None
 Vao_tv = None
 tv_indices = None
 
-Vao_chibi = None
-chibi_indices = None
-chibi_texture = None
-
 WIDTH = 800
 HEIGHT = 600
 
@@ -272,33 +268,6 @@ def inicializaSofa():
     # normais
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, obj_buffer.itemsize * 8, ctypes.c_void_p(20))
     glEnableVertexAttribArray(2)
-
-def inicializaChibi():
-    global Vao_chibi, chibi_indices, chibi_texture
-    chibi_indices, obj_buffer = ObjLoader.load_model("meshes/chibi.obj")
-
-    #Vao do objeto
-    Vao_chibi = glGenVertexArrays(1)
-    glBindVertexArray(Vao_chibi)
-
-    #VBO do objeto. Ao invés de termos 1 VBO para cada informação (vértices, texturas, normais, etc.), este exemplo utiliza
-    #1 único VBO com todas as informações dentro
-    bvbo = glGenBuffers(1)
-    glBindBuffer(GL_ARRAY_BUFFER, bvbo)
-    glBufferData(GL_ARRAY_BUFFER, obj_buffer.nbytes, obj_buffer, GL_STATIC_DRAW)
-    # vertices
-    glEnableVertexAttribArray(0)
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, obj_buffer.itemsize * 8, ctypes.c_void_p(0))
-    # texturas
-    glEnableVertexAttribArray(1)
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, obj_buffer.itemsize * 8, ctypes.c_void_p(12))
-    # normais
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, obj_buffer.itemsize * 8, ctypes.c_void_p(20))
-    glEnableVertexAttribArray(2)
-
-    #carrega os arquivos de textura
-    chibi_texture = glGenTextures(1)
-    load_texture("textures/chibi.png", chibi_texture)
 
 def inicializaShaders():
     global Shader_programm
@@ -572,12 +541,6 @@ def inicializaRenderizacao():
         transformacaoGenerica(1,1,-100,.1,3.5,10,0,90,0)
         glDrawArrays(GL_TRIANGLES, 0, len(parede_indices))
 
-        #chibi
-        glBindVertexArray(Vao_chibi) #ativamos o objeto que queremos renderizar
-        especificaMaterial(0.2, 0.2, 0.2, 0.8, 0.8, 0.8, 0.1, 0.1, 0.1, 32)
-        transformacaoGenerica(3,1.5,5,.1,.1,.1,0,0,0)
-        glDrawArrays(GL_TRIANGLES, 0, len(chibi_indices))
-
         #rack
         glBindVertexArray(Vao_rack) #ativamos o objeto que queremos renderizar
         especificaMaterial(0.2, 0.2, 0.2, 0.8, 0.8, 0.8, 0.1, 0.1, 0.1, 32)
@@ -611,7 +574,6 @@ def inicializaRenderizacao():
 # Função principal
 def main():
     inicializaOpenGL()
-    inicializaChibi()
     inicializaParede()
     inicializaTv()
     inicializaRack()
